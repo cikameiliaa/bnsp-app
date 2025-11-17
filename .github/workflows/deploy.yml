@@ -1,0 +1,27 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+
+    - name: Deploy to EC2
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.HOST }}
+        username: bnsp1
+        key: ${{ secrets.SSH_KEY }}
+        script: |
+          cd bnsp-ci-cd
+          git pull
+          docker build -t bnsp-app:v1 .
+          docker stop bnsp || true
+          docker rm bnsp || true
+          docker run -d --name bnsp -p 80:80 bnsp-app:v1
