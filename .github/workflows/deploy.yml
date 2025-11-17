@@ -1,4 +1,4 @@
-name: Deploy to EC2
+name: Deploy to VPS
 
 on:
   push:
@@ -12,15 +12,15 @@ jobs:
     - name: Checkout repo
       uses: actions/checkout@v3
 
-    - name: Deploy to EC2
+    - name: Deploy to VPS
       uses: appleboy/ssh-action@v1.0.0
       with:
-        host: ${{ secrets.EC2_HOST }}
-        username: ${{ secrets.EC2_USER }}
-        key: ${{ secrets.EC2_SSH_KEY }}
+        host: ${{ secrets.VPS_HOST }}
+        username: ${{ secrets.VPS_USER }}
+        key: ${{ secrets.VPS_KEY }}
         script: |
-          cd bnsp-ci-cd
-          git pull
+          cd /home/bnsp1/bnsp-app
+          git pull origin main
           docker build -t bnsp-app:v1 .
           docker stop bnsp || true
           docker rm bnsp || true
